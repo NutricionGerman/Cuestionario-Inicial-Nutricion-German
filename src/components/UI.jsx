@@ -35,6 +35,11 @@ export function Textarea({ label, hint, value, onChange, rows = 3 }) {
   const recognitionRef = useRef(null);
   const isListeningRef = useRef(false);
   const baseValueRef = useRef(value || '');
+  const valueRef = useRef(value || '');
+
+  useEffect(() => {
+    valueRef.current = value || '';
+  }, [value]);
 
   const detenerDictado = () => {
     isListeningRef.current = false;
@@ -76,8 +81,7 @@ export function Textarea({ label, hint, value, onChange, rows = 3 }) {
       rec.interimResults = true;
       rec.maxAlternatives = 1;
 
-      baseValueRef.current = value ? value.trim() + ' ' : '';
-      let confirmedText = '';
+      baseValueRef.current = valueRef.current ? valueRef.current.trim() + ' ' : '';
 
       rec.onstart = () => {
         isListeningRef.current = true;
@@ -87,20 +91,17 @@ export function Textarea({ label, hint, value, onChange, rows = 3 }) {
       };
 
       rec.onresult = (event) => {
-        let interim = '';
-        let newFinal = '';
-        for (let i = event.resultIndex; i < event.results.length; i++) {
+        let sessionFinal = '';
+        let sessionInterim = '';
+        for (let i = 0; i < event.results.length; i++) {
           const item = event.results[i];
           if (item.isFinal) {
-            newFinal += item[0].transcript + ' ';
+            sessionFinal += item[0].transcript + ' ';
           } else {
-            interim += item[0].transcript;
+            sessionInterim += item[0].transcript;
           }
         }
-        if (newFinal) {
-          confirmedText += newFinal;
-        }
-        const textoTotal = (baseValueRef.current + confirmedText + interim).trimStart();
+        const textoTotal = (baseValueRef.current + sessionFinal + sessionInterim).replace(/\s+/g, ' ').trimStart();
         onChange(textoTotal);
       };
 
@@ -109,23 +110,26 @@ export function Textarea({ label, hint, value, onChange, rows = 3 }) {
         if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
           setTipoMensaje('error');
           setMensajeEstado('Permiso de micrófono denegado. Habilitalo en los permisos del navegador.');
+          isListeningRef.current = false;
+          setIsListening(false);
         } else if (event.error === 'no-speech') {
           setTipoMensaje('info');
-          setMensajeEstado('No se detectó sonido. Tocá Dictar nuevamente para continuar.');
+          setMensajeEstado('No se detectó sonido. Hablá o tocá Detener.');
         } else if (event.error === 'network') {
           setTipoMensaje('error');
           setMensajeEstado('Se necesita conexión a internet para transcribir la voz.');
+          isListeningRef.current = false;
+          setIsListening(false);
         } else {
           setTipoMensaje('info');
           setMensajeEstado(`Aviso (${event.error}). Podés usar también el micrófono de tu teclado.`);
         }
-        isListeningRef.current = false;
-        setIsListening(false);
       };
 
       rec.onend = () => {
-        // En algunos móviles el reconocimiento finaliza al pausar la voz; si el usuario no tocó detener, intentamos reconectar
         if (isListeningRef.current) {
+          // Actualizamos la base con lo transcripto hasta el momento antes de reiniciar la sesión
+          baseValueRef.current = valueRef.current ? valueRef.current.trim() + ' ' : '';
           try {
             rec.start();
           } catch (e) {
@@ -136,6 +140,17 @@ export function Textarea({ label, hint, value, onChange, rows = 3 }) {
           setIsListening(false);
         }
       };
+
+      recognitionRef.current = rec;
+      rec.start();
+    } catch (err) {
+      console.error('Error al iniciar micrófono:', err);
+      setTipoMensaje('error');
+      setMensajeEstado('No se pudo acceder al micrófono. Podés dictar usando el micrófono de tu teclado.');
+      isListeningRef.current = false;
+      setIsListening(false);
+    }
+  };
 
       recognitionRef.current = rec;
       rec.start();
