@@ -152,17 +152,6 @@ export function Textarea({ label, hint, value, onChange, rows = 3 }) {
     }
   };
 
-      recognitionRef.current = rec;
-      rec.start();
-    } catch (err) {
-      console.error('Error al iniciar micrófono:', err);
-      setTipoMensaje('error');
-      setMensajeEstado('No se pudo acceder al micrófono. Podés dictar usando el micrófono de tu teclado.');
-      isListeningRef.current = false;
-      setIsListening(false);
-    }
-  };
-
   return (
     <div className="space-y-1.5">
       {label && <label className="block text-sm font-semibold text-stone-850 leading-snug">{label}</label>}
