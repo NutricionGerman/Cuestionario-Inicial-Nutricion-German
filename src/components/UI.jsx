@@ -34,7 +34,6 @@ export function Textarea({ label, hint, value, onChange, rows = 3 }) {
   const [tipoMensaje, setTipoMensaje] = useState('info'); // 'info' | 'error' | 'success'
   const recognitionRef = useRef(null);
   const isListeningRef = useRef(false);
-  const baseValueRef = useRef(value || '');
   const valueRef = useRef(value || '');
 
   useEffect(() => {
@@ -77,11 +76,11 @@ export function Textarea({ label, hint, value, onChange, rows = 3 }) {
     try {
       const rec = new SpeechRec();
       rec.lang = navigator.language && navigator.language.startsWith('es') ? navigator.language : 'es-ES';
-      rec.continuous = true;
+      rec.continuous = false; // 1 enunciado por sesión evita duplicados en móviles y Chrome
       rec.interimResults = true;
       rec.maxAlternatives = 1;
 
-      baseValueRef.current = valueRef.current ? valueRef.current.trim() + ' ' : '';
+      let initialText = valueRef.current ? valueRef.current.trim() : '';
 
       rec.onstart = () => {
         isListeningRef.current = true;
@@ -91,45 +90,49 @@ export function Textarea({ label, hint, value, onChange, rows = 3 }) {
       };
 
       rec.onresult = (event) => {
-        let sessionFinal = '';
-        let sessionInterim = '';
+        let interimTranscript = '';
+        let finalTranscript = '';
+
         for (let i = 0; i < event.results.length; i++) {
-          const item = event.results[i];
-          if (item.isFinal) {
-            sessionFinal += item[0].transcript + ' ';
+          const res = event.results[i];
+          if (res.isFinal) {
+            finalTranscript += res[0].transcript + ' ';
           } else {
-            sessionInterim += item[0].transcript;
+            interimTranscript += res[0].transcript;
           }
         }
-        const textoTotal = (baseValueRef.current + sessionFinal + sessionInterim).replace(/\s+/g, ' ').trimStart();
-        onChange(textoTotal);
+
+        const currentSpeech = (finalTranscript + interimTranscript).trim();
+        if (currentSpeech) {
+          const full = initialText ? `${initialText} ${currentSpeech}` : currentSpeech;
+          onChange(full);
+
+          if (finalTranscript) {
+            initialText = full;
+          }
+        }
       };
 
       rec.onerror = (event) => {
+        if (event.error === 'no-speech') {
+          return;
+        }
         console.warn('Speech recognition error:', event.error);
         if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
           setTipoMensaje('error');
           setMensajeEstado('Permiso de micrófono denegado. Habilitalo en los permisos del navegador.');
           isListeningRef.current = false;
           setIsListening(false);
-        } else if (event.error === 'no-speech') {
-          setTipoMensaje('info');
-          setMensajeEstado('No se detectó sonido. Hablá o tocá Detener.');
         } else if (event.error === 'network') {
           setTipoMensaje('error');
           setMensajeEstado('Se necesita conexión a internet para transcribir la voz.');
           isListeningRef.current = false;
           setIsListening(false);
-        } else {
-          setTipoMensaje('info');
-          setMensajeEstado(`Aviso (${event.error}). Podés usar también el micrófono de tu teclado.`);
         }
       };
 
       rec.onend = () => {
         if (isListeningRef.current) {
-          // Actualizamos la base con lo transcripto hasta el momento antes de reiniciar la sesión
-          baseValueRef.current = valueRef.current ? valueRef.current.trim() + ' ' : '';
           try {
             rec.start();
           } catch (e) {
