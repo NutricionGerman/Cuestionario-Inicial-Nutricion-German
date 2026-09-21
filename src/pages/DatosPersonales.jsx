@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Input, SectionHeader, Card, NavButtons } from '../components/UI';
 
-const CONVIVENCIA = ['Solo/a', 'En pareja', 'Con hijos', 'Con amigos / companeros', 'Con padres / familia'];
-const HORARIOS    = ['Oficina (9-18h)', 'Mañana', 'Tarde', 'Noche', 'Rotativo', 'Home office', 'Flexible'];
+const QUIEN_COCINA = ['Yo mismo/a', 'Mi pareja', 'Mis padres / familia', 'Compro viandas / hecho', 'Entre varios en casa'];
+const HORARIOS     = ['Oficina (9-18h)', 'Mañana', 'Tarde', 'Noche', 'Rotativo', 'Home office', 'Flexible'];
 
 const MESES = [
   'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -156,17 +156,17 @@ export default function DatosPersonales({ form, set, toggle, onNext }) {
           </div>
         </Card>
 
-        {/* Convivencia en pastillas compactas */}
+        {/* Quién cocina en pastillas compactas */}
         <Card>
-          <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-2">¿Con quién convivís?</label>
+          <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-2">¿Quién cocina habitualmente en tu casa?</label>
           <div className="flex flex-wrap gap-1.5">
-            {CONVIVENCIA.map(op => {
-              const sel = (form.convivencia || []).includes(op);
+            {QUIEN_COCINA.map(op => {
+              const sel = (form.quienCocina || form.convivencia || []).includes(op);
               return (
                 <button
                   key={op}
                   type="button"
-                  onClick={() => toggle('convivencia', op)}
+                  onClick={() => toggle('quienCocina', op)}
                   className={`px-3 py-2 rounded-xl text-xs font-semibold border transition-all ${
                     sel ? 'bg-green-800 border-green-800 text-white shadow-sm' : 'bg-stone-50 border-stone-200 text-stone-700 hover:bg-white'
                   }`}

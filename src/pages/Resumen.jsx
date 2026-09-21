@@ -29,7 +29,7 @@ export default function Resumen({ form, reset }) {
       fechaNacimiento: form.fechaNacimiento || '',
       ocupacion: form.ocupacion || '',
       horarioTrabajo: form.horarioTrabajo || '',
-      convivencia: form.convivencia || [],
+      convivencia: (form.quienCocina || form.convivencia || []).join(', '),
       objetivo: obj ? obj.titulo : (form.objetivo || ''),
       intentosPrevios: form.intentosPrevios || '',
       motivacion: form.motivacion || '',
