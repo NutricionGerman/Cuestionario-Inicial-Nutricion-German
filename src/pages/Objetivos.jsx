@@ -95,12 +95,22 @@ export default function Objetivos({ form, set, onNext, onPrev }) {
         <Card>
           <div className="space-y-4">
             <Textarea
-              label="¿Qué intentaste antes para alcanzar este objetivo?"
-              hint="Contame si seguiste otras dietas, planes o cambios de hábitos, y qué sentís que te costó sostener o qué no te funcionó..."
-              value={form.intentosPrevios}
-              onChange={v => set({ intentosPrevios: v })}
+              label="Contame un poco más sobre tu objetivo"
+              hint="¿Qué buscás lograr específicamente en tu día a día o en tu físico?"
+              value={form.objetivoTexto}
+              onChange={v => set({ objetivoTexto: v })}
               rows={3}
             />
+
+            <div className="border-t border-stone-100 pt-3">
+              <Textarea
+                label="¿Qué intentaste antes para alcanzar este objetivo?"
+                hint="Contame si seguiste otras dietas, planes o cambios de hábitos, y qué sentís que te costó sostener o qué no te funcionó..."
+                value={form.intentosPrevios}
+                onChange={v => set({ intentosPrevios: v })}
+                rows={3}
+              />
+            </div>
 
             <div className="border-t border-stone-100 pt-3">
               <Textarea

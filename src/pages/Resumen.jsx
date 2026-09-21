@@ -31,6 +31,7 @@ export default function Resumen({ form, reset }) {
       horarioTrabajo: form.horarioTrabajo || '',
       convivencia: (form.quienCocina || form.convivencia || []).join(', '),
       objetivo: obj ? obj.titulo : (form.objetivo || ''),
+      objetivoDetalle: form.objetivoTexto || '',
       intentosPrevios: form.intentosPrevios || '',
       motivacion: form.motivacion || '',
       alergias: form.alergias || '',
