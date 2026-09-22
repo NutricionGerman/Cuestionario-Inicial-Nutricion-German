@@ -24,6 +24,18 @@ export const CHIPS_PICOTEO = [
   'Snacks salados', 'Barritas de cereal', 'Queso', 'Mate', 'Casi no picoteo',
 ];
 
+export const CHIPS_ALACENA = [
+  'Frutas y verduras frescas',
+  'Frutos secos y semillas',
+  'Legumbres y cereales integrales',
+  'Enlatados y conservas',
+  'Galletitas y snacks dulces',
+  'Snacks salados y quesos',
+  'Comidas congeladas / Viandas',
+  'Gaseosas y bebidas azucaradas',
+  'Proteína en polvo / Suplementos',
+];
+
 export const NIVEL_COCINA = [
   { id: 'chef',      label: 'Cocino bien y tengo tiempo',  desc: 'Disfruto cocinar y puedo preparar recetas elaboradas' },
   { id: 'practico',  label: 'Cocino lo básico y rápido',   desc: 'Prefiero platos simples que no tomen más de 20 minutos' },

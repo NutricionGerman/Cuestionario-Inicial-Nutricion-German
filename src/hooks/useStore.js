@@ -29,6 +29,7 @@ const init = {
   meriendaTexto: '',
   chipsAlmuerzo: [],
   almuerzoCenaTexto: '',
+  chipsAlacena: [],
   chipsPicoteo: [],
   ansiedadMoments: [],
   nivelCocina: '',

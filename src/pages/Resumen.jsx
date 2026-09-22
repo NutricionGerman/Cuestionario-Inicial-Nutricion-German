@@ -47,6 +47,7 @@ export default function Resumen({ form, reset }) {
       desayunoTexto: form.desayunoTexto || '',
       meriendaTexto: form.meriendaTexto || '',
       almuerzoCenaTexto: form.almuerzoCenaTexto || '',
+      chipsAlacena: form.chipsAlacena || [],
       chipsPicoteo: form.chipsPicoteo || [],
       ansiedadMoments: form.ansiedadMoments || [],
       nivelCocina: form.nivelCocina || '',
